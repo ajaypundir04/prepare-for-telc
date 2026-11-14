@@ -9,7 +9,9 @@ import { environment } from '../../../environments/environment';
 })
 export class QuestionService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/questions`;
+  private get apiUrl(): string {
+    return `${environment.apiUrl}/questions`;
+  }
 
   getQuestions(level?: ExamLevel, module?: ExamModule): Observable<Question[]> {
     let params = new HttpParams();

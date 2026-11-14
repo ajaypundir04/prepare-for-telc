@@ -9,7 +9,23 @@ import { environment } from '../../../environments/environment';
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private get apiUrl(): string {
+    return `${environment.apiUrl}/auth`;
+  }
+
+  public getApiBaseUrl(): string {
+    return environment.apiUrl;
+  }
+
+  public setCustomApiBaseUrl(url: string): void {
+    if (typeof localStorage !== 'undefined') {
+      if (!url || url.trim() === '') {
+        localStorage.removeItem('telc_api_base_url');
+      } else {
+        localStorage.setItem('telc_api_base_url', url.trim());
+      }
+    }
+  }
 
   private currentUserSubject = new BehaviorSubject<User | null>(this.getStoredUser());
   public currentUser$ = this.currentUserSubject.asObservable();

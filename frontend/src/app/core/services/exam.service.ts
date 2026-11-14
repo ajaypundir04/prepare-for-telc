@@ -9,7 +9,9 @@ import { environment } from '../../../environments/environment';
 })
 export class ExamService {
   private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl;
+  private get apiUrl(): string {
+    return environment.apiUrl;
+  }
 
   // Exams
   getExams(level?: ExamLevel): Observable<Exam[]> {
