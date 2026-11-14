@@ -1,0 +1,35 @@
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Backend (Maven & Java)
+backend/target/
+target/
+backend/.gradle/
+backend/build/
+backend/out/
+backend/*.log
+backend/.project
+backend/.classpath
+backend/.settings/
+
+# Frontend (Node / Angular)
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Environment & Secrets
+.env
+.env.local
+*.secret

@@ -1,0 +1,9 @@
+package com.preparefortelc.questionbank.domain;
+
+public enum ExamLevel {
+    A1,
+    A2,
+    B1,
+    B2,
+    C1
+}

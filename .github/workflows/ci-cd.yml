@@ -1,0 +1,111 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # =========================================================================
+  # 1. Backend CI Job (Java 25 + Maven + Spring Boot DDD)
+  # =========================================================================
+  backend-ci:
+    name: Backend CI (Java 25 / Maven)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'oracle'
+          cache: 'maven'
+
+      - name: Grant Execute Permission to Maven Wrapper
+        run: chmod +x backend/mvnw
+
+      - name: Run Backend Unit & Integration Tests
+        run: |
+          cd backend
+          ./mvnw -B clean verify
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-test-reports
+          path: backend/target/surefire-reports/
+          if-no-files-found: ignore
+
+  # =========================================================================
+  # 2. Frontend CI Job (Node 22 + Angular 18+)
+  # =========================================================================
+  frontend-ci:
+    name: Frontend CI (Node 22 / Angular 18+)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build Angular Production Artifact
+        run: |
+          cd frontend
+          npm run build -- --configuration production
+
+      - name: Verify Static Distribution Bundle
+        run: |
+          if [ ! -f "frontend/dist/frontend/browser/index.html" ]; then
+            echo "Error: index.html not found in frontend/dist/frontend/browser/"
+            exit 1
+          fi
+          echo "Frontend bundle verified successfully."
+
+  # =========================================================================
+  # 3. Continuous Deployment to Render
+  # =========================================================================
+  deploy-render:
+    name: Continuous Deployment (Render)
+    needs: [backend-ci, frontend-ci]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Trigger Render API Web Service Deployment
+        if: env.RENDER_API_DEPLOY_HOOK != ''
+        env:
+          RENDER_API_DEPLOY_HOOK: ${{ secrets.RENDER_API_DEPLOY_HOOK }}
+        run: |
+          echo "Triggering Render API deployment..."
+          curl -f -X POST "$RENDER_API_DEPLOY_HOOK"
+
+      - name: Trigger Render Web Static Site Deployment
+        if: env.RENDER_WEB_DEPLOY_HOOK != ''
+        env:
+          RENDER_WEB_DEPLOY_HOOK: ${{ secrets.RENDER_WEB_DEPLOY_HOOK }}
+        run: |
+          echo "Triggering Render Web static site deployment..."
+          curl -f -X POST "$RENDER_WEB_DEPLOY_HOOK"
+
+      - name: Deployment Trigger Complete
+        run: echo "Render deploy webhooks triggered successfully."

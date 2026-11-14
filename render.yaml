@@ -1,0 +1,38 @@
+services:
+  # 1. Spring Boot Backend API Service
+  - type: web
+    name: prepare-for-telc-api
+    env: docker
+    rootDir: backend
+    plan: starter
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: prepare-for-telc-db
+          property: connectionString
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 8080
+
+  # 2. Angular Frontend Static Site
+  - type: web
+    name: prepare-for-telc-web
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build -- --configuration production
+    staticPublishPath: ./dist/frontend/browser
+    envVars:
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: prepare-for-telc-api
+          property: url
+
+databases:
+  - name: prepare-for-telc-db
+    databaseName: prepare_for_telc_production
+    user: telc_admin
+    plan: starter

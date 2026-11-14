@@ -1,0 +1,37 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: prepare-for-telc-api
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:prepare_for_telc;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL}
+    username: ${SPRING_DATASOURCE_USERNAME:telc_admin}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:}
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      pool-name: TelcHikariCP
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dGVsYy1leGFtLXByZXBhcmF0aW9uLXN1cGVyLXNlY3JldC1qd3Qta2V5LTIwMjYtbW9ub3JlcG8tc3lzdGVt}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
