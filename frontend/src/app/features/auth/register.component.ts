@@ -80,12 +80,6 @@ import { Role } from '../../core/models';
           <span>Already registered? </span>
           <a routerLink="/auth/login" class="link">Sign in here</a>
         </div>
-
-        <div class="api-bar">
-          <span class="api-label">Backend:</span>
-          <code class="api-url" [title]="currentApiUrl">{{ currentApiUrl }}</code>
-          <button type="button" (click)="editApiUrl()" class="btn-api-edit">Change</button>
-        </div>
       </div>
     </div>
   `,
@@ -202,40 +196,6 @@ import { Role } from '../../core/models';
     .link:hover {
       text-decoration: underline;
     }
-    .api-bar {
-      margin-top: 1.25rem;
-      padding-top: 0.75rem;
-      border-top: 1px dashed #334155;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      color: #94a3b8;
-    }
-    .api-url {
-      color: #38bdf8;
-      background: #0f172a;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 210px;
-    }
-    .btn-api-edit {
-      background: #334155;
-      color: #f8fafc;
-      border: none;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    .btn-api-edit:hover {
-      background: #475569;
-    }
   `]
 })
 export class RegisterComponent {
@@ -248,22 +208,6 @@ export class RegisterComponent {
   role: Role = 'ROLE_STUDENT';
   loading = false;
   errorMessage = '';
-
-  get currentApiUrl(): string {
-    return this.authService.getApiBaseUrl();
-  }
-
-  editApiUrl(): void {
-    const current = this.currentApiUrl.replace(/\/api$/, '');
-    const entered = prompt(
-      'Configure Spring Boot Backend URL:\n(e.g., https://prepare-for-telc-api.onrender.com)',
-      current
-    );
-    if (entered !== null) {
-      this.authService.setCustomApiBaseUrl(entered);
-      window.location.reload();
-    }
-  }
 
   onSubmit(): void {
     if (!this.name || !this.email || !this.password) return;
