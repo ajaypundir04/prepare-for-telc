@@ -4,6 +4,8 @@ services:
     name: prepare-for-telc-api
     env: docker
     rootDir: backend
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     plan: starter
     envVars:
       - key: SPRING_DATASOURCE_URL
