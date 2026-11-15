@@ -1,4 +1,7 @@
 import { Routes } from '@angular/router';
+import { IntroComponent } from './features/public/intro.component';
+import { AboutComponent } from './features/public/about.component';
+import { ContactComponent } from './features/public/contact.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { StudentDashboardComponent } from './features/student/student-dashboard.component';
@@ -11,9 +14,17 @@ import { authGuard } from './core/guards/auth.guard';
 import { studentGuard, teacherGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'student/dashboard', pathMatch: 'full' },
+  // Public Pages
+  { path: '', component: IntroComponent },
+  { path: 'intro', component: IntroComponent },
+  { path: 'about', component: AboutComponent },
+  { path: 'contact', component: ContactComponent },
+
+  // Authentication
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
+
+  // Candidate / Student Portal
   {
     path: 'student/dashboard',
     component: StudentDashboardComponent,
@@ -29,6 +40,8 @@ export const routes: Routes = [
     component: ExamResultComponent,
     canActivate: [authGuard]
   },
+
+  // Educator / Teacher CMS
   {
     path: 'teacher/dashboard',
     component: TeacherDashboardComponent,
@@ -44,5 +57,7 @@ export const routes: Routes = [
     component: ExamManagerComponent,
     canActivate: [teacherGuard]
   },
+
+  // Fallback
   { path: '**', redirectTo: '' }
 ];
