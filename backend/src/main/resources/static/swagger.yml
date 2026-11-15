@@ -839,7 +839,7 @@ components:
           type: object
           additionalProperties:
             type: string
-          description: Mapping of questionId to chosen option letter (e.g. "1": "B")
+          description: 'Mapping of questionId to chosen option letter (e.g. "1": "B")'
           example:
             "1": "B"
             "2": "B"
